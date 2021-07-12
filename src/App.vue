@@ -1,34 +1,40 @@
 <template>
   <div id="nav">
-    <nav-bar></nav-bar>
+    <app-layout>
+      <router-view />
+    </app-layout>
   </div>
-  <router-view />
 </template>
 
-<style>
-* {
-  margin: 0;
-  padding: 0;
-}
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
 <script>
-import NavBar from "@/components/NavBar";
+import AppLayout from "@/layouts/AppLayoutComponent";
+import firebase from "firebase";
+import { mapMutations } from "vuex";
+
 export default {
-  components: { NavBar },
+  components: { AppLayout },
+  beforeMount() {
+    firebase.auth().onAuthStateChanged((user) => {
+      this.setUser(user);
+
+      console.log(user);
+      const isAuthPages =
+        this.$route.path === "/login" || this.$route.path === "/registration";
+      if (!user) {
+        this.$router.replace("/login");
+      } else if (isAuthPages) {
+        this.$router.replace("/");
+      }
+    });
+  },
+  methods: {
+    ...mapMutations({
+      setUser: "SET_USER",
+    }),
+  },
 };
 </script>
+
+<style>
+@import "./assets/global.css";
+</style>

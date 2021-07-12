@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-import { uniqueId } from "../utils";
+import { uniqueId } from "@/utils";
 
 // const task = {
 //   id: Number,
@@ -11,39 +11,40 @@ import { uniqueId } from "../utils";
 
 export default createStore({
   state: {
-    tasks: [],
-    toEdit: null,
+    todos: [],
+    editTodo: null,
+    user: null,
   },
   mutations: {
-    ADD_TASK(state, value) {
-      console.log(123);
-      const task = {
+    ADD_TODO(state, value) {
+      const todo = {
         ...value,
         id: uniqueId(),
         checked: false,
         date: new Date(),
       };
-      state.tasks.push(task);
-      console.log(state.tasks);
+      state.todos.push(todo);
     },
-    TOGGLE_TASK(state, id) {
-      const task = state.tasks.find((task) => task.id === id);
-      task.checked = !task.checked;
+    TOGGLE_TODO(state, todo) {
+      todo.checked = !todo.checked;
     },
-    UPDATE_TASK(state, task) {
-      console.log(task);
-      state.toEdit = task;
+    DELETE_TODO(state, value) {
+      const index = state.todos.findIndex((todo) => todo.id === value.id);
+
+      return index === -1 ? "" : state.todos.splice(index, 1);
+    },
+
+    SET_EDIT_TODO(state, todo) {
+      state.editTodo = todo;
     },
     TO_UPDATE_TASK(state, value) {
-      state.toEdit.name = value.name;
-      state.toEdit.description = value.description;
-      state.toEdit.date = new Date();
-      state.toEdit = null;
+      state.editTodo.name = value.name;
+      state.editTodo.description = value.description;
+      state.editTodo.date = new Date();
+      state.editTodo = null;
     },
-    DELETE_TASK(state, id) {
-      const index = state.tasks.findIndex((task) => task.id === id);
-
-      return index === -1 ? "" : state.tasks.splice(index, 1);
+    SET_USER(state, user) {
+      state.user = user;
     },
   },
   actions: {},

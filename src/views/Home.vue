@@ -1,43 +1,56 @@
 <template>
   <div class="home">
-    <div class="home__pending">
-      <div class="header">Todo tasks</div>
-      <task-list :tasks="tasks"></task-list>
-      <button @click="addTask">Add task</button>
+    <div>
+      Todo tasks
+      <div>
+        <todo-list :todos="todos" />
+        <button class="add-button" @click="addTask">Add Todo</button>
+      </div>
     </div>
-    <div class="home__done">
-      <div class="header">Done tasks</div>
-      <task-list :tasks="doneTasks" :isEditable="false"></task-list>
+    <div>
+      Done tasks
+      <div
+        style="text-decoration: line-through"
+        v-for="task in doneTasks"
+        :key="task.id"
+      >
+        {{ task }}
+      </div>
     </div>
+
+    <!--    <div class="home__done">-->
+    <!--      <div class="header">Done tasks</div>-->
+    <!--&lt;!&ndash;      <task-list :tasks="doneTasks" :isEditable="false"></task-list>&ndash;&gt;-->
+    <!--    </div>-->
   </div>
   <add-modal
     v-if="showAddModal"
     @close="showAddModal = false"
-    @add="mAddTask"
+    @add="mAddTodo"
   ></add-modal>
 
   <update-modal
-    v-if="toEdit"
-    :prop-name="toEdit.name"
-    :prop-description="toEdit.description"
+    v-if="editTodo"
+    :prop-name="editTodo.name"
+    :prop-description="editTodo.description"
     @update="updateTask"
   >
   </update-modal>
 </template>
 
 <script>
-import TaskList from "@/components/TaskList";
-import AddModal from "@/components/AddModal";
+import AddModal from "@/components/modals/AddModal";
 import { mapMutations, mapState } from "vuex";
-import UpdateModal from "@/components/UpdateModal";
+import UpdateModal from "@/components/modals/UpdateModal";
+import TodoList from "@/components/todo/TodoList";
 
 export default {
   name: "Home",
-  components: { UpdateModal, AddModal, TaskList },
+  components: { TodoList, UpdateModal, AddModal },
   computed: {
-    ...mapState(["tasks", "toEdit"]),
+    ...mapState(["todos", "editTodo"]),
     doneTasks() {
-      return this.tasks.filter((task) => task.checked);
+      return this.todos.filter((task) => task.checked);
     },
   },
   data: () => ({
@@ -45,7 +58,7 @@ export default {
   }),
   methods: {
     ...mapMutations({
-      mAddTask: "ADD_TASK",
+      mAddTodo: "ADD_TODO",
       updateTask: "TO_UPDATE_TASK",
     }),
     addTask() {
@@ -60,15 +73,19 @@ export default {
   display: flex;
   justify-content: space-around;
   margin: 20px 0;
+  padding-bottom: 1000px;
 
   & > div {
-    border: 1px solid green;
+    border: 1px solid #8f8f8f;
+    border-radius: 4px;
     padding: 24px;
+    width: 50%;
+    margin: 32px;
+  }
 
-    .header {
-      font-size: 20px;
-      font-weight: bold;
-    }
+  .add-button {
+    width: 100%;
+    padding: 4px;
   }
 }
 </style>
